@@ -1,0 +1,60 @@
+-- ============================================================
+--  Expense Tracker DB Setup Script
+--  Run this once to create the database and seed data
+-- ============================================================
+
+CREATE DATABASE IF NOT EXISTS expense_tracker_db
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE expense_tracker_db;
+
+-- ── EXPENSES TABLE ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS expenses (
+    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title          VARCHAR(100)   NOT NULL,
+    description    VARCHAR(500),
+    amount         DECIMAL(12,2)  NOT NULL,
+    date           DATE           NOT NULL,
+    category       VARCHAR(50)    NOT NULL,
+    payment_method VARCHAR(50),
+    tags           VARCHAR(100),
+    created_at     DATETIME       DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_category (category),
+    INDEX idx_date (date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ── BUDGETS TABLE ──────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS budgets (
+    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    category     VARCHAR(50)    NOT NULL UNIQUE,
+    budget_limit DECIMAL(12,2)  NOT NULL,
+    month_year   VARCHAR(7),
+    created_at   DATETIME       DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ── SEED DATA ──────────────────────────────────────────────
+INSERT INTO expenses (title, description, amount, date, category, payment_method, tags) VALUES
+('Grocery Shopping',    'Weekly groceries at supermarket',    2850.00, CURDATE() - INTERVAL 1 DAY,  'Food',          'UPI',         'groceries,weekly'),
+('Electric Bill',       'Monthly electricity bill',          1250.00, CURDATE() - INTERVAL 3 DAY,  'Utilities',     'Net Banking', 'bills'),
+('Netflix Subscription','Monthly OTT subscription',           649.00, CURDATE() - INTERVAL 5 DAY,  'Entertainment', 'Card',        'subscription'),
+('Fuel',                'Bike fuel',                          450.00, CURDATE() - INTERVAL 2 DAY,  'Transport',     'Cash',        'fuel'),
+('Restaurant Dinner',   'Dinner with family',                1800.00, CURDATE() - INTERVAL 4 DAY,  'Food',          'Card',        'dining,family'),
+('Gym Membership',      'Monthly gym fee',                   1200.00, CURDATE() - INTERVAL 6 DAY,  'Health',        'UPI',         'fitness'),
+('Mobile Recharge',     'Prepaid recharge',                   719.00, CURDATE() - INTERVAL 7 DAY,  'Utilities',     'UPI',         'mobile'),
+('Online Shopping',     'Clothes from Myntra',               3200.00, CURDATE() - INTERVAL 8 DAY,  'Shopping',      'Card',        'clothes'),
+('Medicine',            'Monthly medicines',                  580.00, CURDATE() - INTERVAL 9 DAY,  'Health',        'Cash',        'medicine'),
+('Internet Bill',       'Broadband monthly bill',             799.00, CURDATE() - INTERVAL 10 DAY, 'Utilities',     'Net Banking', 'bills');
+
+INSERT INTO budgets (category, budget_limit, month_year) VALUES
+('Food',          8000.00, DATE_FORMAT(CURDATE(), '%Y-%m')),
+('Utilities',     4000.00, DATE_FORMAT(CURDATE(), '%Y-%m')),
+('Entertainment', 2000.00, DATE_FORMAT(CURDATE(), '%Y-%m')),
+('Transport',     3000.00, DATE_FORMAT(CURDATE(), '%Y-%m')),
+('Shopping',      5000.00, DATE_FORMAT(CURDATE(), '%Y-%m')),
+('Health',        3000.00, DATE_FORMAT(CURDATE(), '%Y-%m'));
+
+SELECT 'Database setup complete!' AS status;
+SELECT COUNT(*) AS expense_count FROM expenses;
+SELECT COUNT(*) AS budget_count FROM budgets;

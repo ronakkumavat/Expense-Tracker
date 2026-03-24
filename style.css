@@ -1,0 +1,232 @@
+# 💰 Expense Tracker
+
+A full-stack expense tracking application built with **Java Spring Boot** (backend) and **HTML/CSS/JS** (frontend), using **MySQL** as the database.
+
+---
+
+## 📁 Project Structure
+
+```
+expense-tracker/
+├── backend/                          # Java Spring Boot REST API
+│   ├── pom.xml
+│   └── src/main/
+│       ├── java/com/expensetracker/
+│       │   ├── ExpenseTrackerApplication.java
+│       │   ├── config/
+│       │   │   ├── WebConfig.java             # CORS configuration
+│       │   │   └── GlobalExceptionHandler.java
+│       │   ├── controller/
+│       │   │   ├── ExpenseController.java     # Expense REST endpoints
+│       │   │   └── BudgetController.java      # Budget REST endpoints
+│       │   ├── model/
+│       │   │   ├── Expense.java               # Expense entity
+│       │   │   └── Budget.java                # Budget entity
+│       │   ├── repository/
+│       │   │   ├── ExpenseRepository.java     # JPA queries
+│       │   │   └── BudgetRepository.java
+│       │   └── service/
+│       │       ├── ExpenseService.java        # Business logic
+│       │       └── BudgetService.java
+│       └── resources/
+│           └── application.properties        # DB config
+│
+├── frontend/                         # Static HTML/CSS/JS
+│   ├── index.html                    # Main SPA
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       ├── api.js                    # API client + helpers
+│       └── app.js                    # App logic + UI
+│
+├── database/
+│   └── setup.sql                     # DB schema + seed data
+│
+└── README.md
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+| Tool | Version |
+|------|---------|
+| Java | 17+ |
+| Maven | 3.8+ |
+| MySQL | 8.0+ |
+| A browser | Any modern browser |
+
+---
+
+### 1️⃣ Database Setup
+
+```bash
+# Log in to MySQL
+mysql -u root -p
+
+# Run the setup script
+source /path/to/expense-tracker/database/setup.sql
+```
+
+Or directly:
+```bash
+mysql -u root -p < database/setup.sql
+```
+
+This creates the `expense_tracker_db` database with tables and seed data.
+
+---
+
+### 2️⃣ Backend Setup
+
+#### Configure DB credentials
+
+Edit `backend/src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/expense_tracker_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=YOUR_MYSQL_PASSWORD
+```
+
+#### Build & Run
+
+```bash
+cd backend
+mvn clean install
+mvn spring-boot:run
+```
+
+The API will be available at: **http://localhost:8080**
+
+---
+
+### 3️⃣ Frontend Setup
+
+No build step required — it's plain HTML/CSS/JS.
+
+**Option A — Open directly in browser:**
+```bash
+open frontend/index.html
+# or double-click frontend/index.html
+```
+
+**Option B — Serve with a local server (recommended):**
+```bash
+# Python
+cd frontend
+python3 -m http.server 3000
+
+# Node.js (npx)
+cd frontend
+npx serve .
+```
+
+Then open: **http://localhost:3000**
+
+---
+
+## 🌐 API Endpoints
+
+### Expenses
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/expenses` | Get all expenses |
+| GET | `/api/expenses/{id}` | Get expense by ID |
+| POST | `/api/expenses` | Create expense |
+| PUT | `/api/expenses/{id}` | Update expense |
+| DELETE | `/api/expenses/{id}` | Delete expense |
+| GET | `/api/expenses/category/{cat}` | Filter by category |
+| GET | `/api/expenses/month?month=&year=` | Filter by month |
+| GET | `/api/expenses/search?keyword=` | Search expenses |
+| GET | `/api/expenses/stats/dashboard` | Dashboard statistics |
+| GET | `/api/expenses/stats/by-category` | Totals by category |
+| GET | `/api/expenses/stats/by-month` | Totals by month |
+
+### Budgets
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/budgets` | Get all budgets |
+| GET | `/api/budgets/{id}` | Get budget by ID |
+| POST | `/api/budgets` | Create budget |
+| PUT | `/api/budgets/{id}` | Update budget |
+| DELETE | `/api/budgets/{id}` | Delete budget |
+
+---
+
+### Sample Request — Create Expense
+
+```bash
+curl -X POST http://localhost:8080/api/expenses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Grocery Shopping",
+    "description": "Weekly groceries",
+    "amount": 2500.00,
+    "date": "2026-03-25",
+    "category": "Food",
+    "paymentMethod": "UPI",
+    "tags": "groceries,weekly"
+  }'
+```
+
+---
+
+## ✨ Features
+
+- ✅ **Dashboard** — Total spending, this month, category breakdown, recent transactions
+- ✅ **Expenses CRUD** — Add, edit, delete, search, and filter expenses
+- ✅ **Budgets** — Set per-category budgets with visual progress bars
+- ✅ **Reports** — Doughnut chart (by category) + Bar chart (monthly trend)
+- ✅ **Search & Filter** — Real-time search, category filter
+- ✅ **Validation** — Both client-side and server-side validation
+- ✅ **CORS** — Configured for local frontend-backend separation
+
+---
+
+## 🎨 Frontend Pages
+
+| Page | Description |
+|------|-------------|
+| Dashboard | Overview stats, category breakdown, recent expenses |
+| Expenses | Full CRUD table with search & category filter |
+| Budgets | Set budget limits per category with spending progress |
+| Reports | Visual charts — doughnut + monthly bar |
+
+---
+
+## 🛠 Tech Stack
+
+**Backend**
+- Java 17
+- Spring Boot 3.2
+- Spring Data JPA
+- MySQL 8
+- Lombok
+- Bean Validation
+
+**Frontend**
+- HTML5 / CSS3 / Vanilla JS
+- Chart.js 4 (charts)
+- Google Fonts (Syne + DM Sans)
+- Fetch API (HTTP client)
+
+---
+
+## 🔧 Troubleshooting
+
+**CORS error in browser?**
+- Ensure backend is running on port 8080
+- The `WebConfig.java` allows all origins — check it's loaded
+
+**MySQL connection refused?**
+- Verify MySQL is running: `sudo systemctl status mysql`
+- Check credentials in `application.properties`
+
+**Charts not loading?**
+- Make sure Chart.js CDN is accessible
+- Check browser console for JS errors
